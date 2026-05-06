@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MRH Operational Diagnostic</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    :root {
+        --navy: #0A2342;
+        --white: #FFFFFF;
+        --mustard: #E3B505;
+        --mustard-dark: #C99F04;
+        --gray-light: #F5F7FA;
+    }
+    
+    * {
+        scroll-behavior: smooth;
+    }
+    
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: var(--white);
+        color: #1a1a1a;
+    }
+    
+    .btn-primary {
+        background: var(--mustard);
+        color: var(--navy);
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+    
+    .btn-primary:hover {
+        background: var(--mustard-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(227, 181, 5, 0.3);
+    }
+    
+    .btn-secondary {
+        background: var(--navy);
+        color: var(--white);
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+    
+    .btn-secondary:hover {
+        background: #081B33;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(10, 35, 66, 0.3);
+    }
+    
+    .form-input, .form-textarea, .form-select {
+        transition: all 0.2s ease;
+        border: 2px solid #E5E7EB;
+    }
+    
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+        border-color: var(--mustard);
+        box-shadow: 0 0 0 3px rgba(227, 181, 5, 0.1);
+        outline: none;
+    }
+    
+    .form-radio:checked, .form-checkbox:checked {
+        background-color: var(--mustard);
+        border-color: var(--mustard);
+    }
+    
+    .form-radio:focus, .form-checkbox:focus {
+        box-shadow: 0 0 0 3px rgba(227, 181, 5, 0.2);
+    }
+    
+    .progress-bar-fill {
+        background: linear-gradient(90deg, var(--mustard) 0%, #F5D547 100%);
+        transition: width 0.4s ease;
+    }
+    
+    .section {
+        display: none;
+        animation: fadeIn 0.4s ease;
+    }
+    
+    .section.active {
+        display: block;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .card {
+        background: var(--white);
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1), 0 8px 24px rgba(0,0,0,0.08);
+    }
+    
+    .question-label {
+        color: var(--navy);
+        font-weight: 600;
+    }
+    
+    .required-star {
+        color: #DC2626;
+    }
+    
+    input[type="radio"], input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        accent-color: var(--mustard);
+        cursor: pointer;
+    }
+    
+    label:has(input[type="radio"]:checked), label:has(input[type="checkbox"]:checked) {
+        background: rgba(227, 181, 5, 0.08);
+        border-color: var(--mustard);
+    }
+</style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header style="background: var(--navy);" class="text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center text-2xl font-bold" style="background: var(--mustard); color: var(--navy);">
+                        MRH
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold">MRH Operational Diagnostic</h1>
+                        <p class="text-sm text-gray-300 hidden sm:block">Supply Chain Assessment</p>
+                    </div>
+                <div id="sectionCounter" class="text-sm font-medium hidden">
+                    <span id="currentSectionNum">1</span> / <span id="totalSections">9</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-700 h-1.5">
+            <div id="progressBar" class="progress-bar-fill h-full" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        
+        <!-- Intro Section -->
+        <section id="section-0" class="section active">
+            <div class="card p-6 sm:p-10">
+                <div class="mb-8">
+                    <div class="inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-4" style="background: rgba(227, 181, 5, 0.15); color: var(--navy);">
+                        Operational Assessment
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-bold mb-4" style="color: var(--navy);">Welcome to the MRH Operational Diagnostic</h2>
+                    <p class="text-lg text-gray-600 leading-relaxed">
+                        This assessment is designed to capture operational insights from team members across MRH's global supply chain operations.
+                    </p>
+                </div>
+                
+                <div class="space-y-6 text-gray-700">
+                    <div class="p-6 rounded-lg" style="background: var(--gray-light); border-left: 4px solid var(--mustard);">
+                        <h3 class="font-bold text-lg mb-2" style="color: var(--navy);">Purpose Statement</h3>
+                        <p class="leading-relaxed">
+                            The MRH Operational Diagnostic is a structured assessment tool designed to gather ground-level insights from employees across our supply chain operations. This diagnostic captures your direct experience with daily processes, cross-functional collaboration, customer touchpoints, and operational challenges. Your honest feedback will help identify improvement opportunities, streamline workflows, and enhance overall operational excellence across the organization.
+                        </p>
+                    </div>
+                    
+                    <div class="grid sm:grid-cols-3 gap-4 mt-8">
+                        <div class="text-center p-4">
+                            <div class="text-3xl font-bold mb-1" style="color: var(--mustard);">8</div>
+                            <div class="text-sm text-gray-600">Sections</div>
+                        </div>
+                        <div class="text-center p-4">
+                            <div class="text-3xl font-bold mb-1" style="color: var(--mustard);">41</div>
+                            <div class="text-sm text-gray-600">Questions</div>
+                        </div>
+                        <div class="text-center p-4">
+                            <div class="text-3xl font-bold mb-1" style="color: var(--mustard);">~15</div>
+                            <div class="text-sm text-gray-600">Minutes</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-10 flex justify-end">
+                    <button onclick="nextSection()" class="btn-primary px-8 py-3 rounded-lg text-base flex items-center gap-2">
+                        Begin Assessment
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <form id="diagnosticForm" class="space-y-6">
+            
+            <!-- Section 1: Employee Information -->
+            <section id="section-1" class="section">
+                <div class="card p-6 sm:p-10">
+                    <div class="mb-8">
+                        <div class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3" style="background: rgba(10, 35, 66, 0.1); color: var(--navy);">
+                            Section 1 of 8
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2" style="color: var(--navy);">Employee Information</h2>
+                        <p class="text-gray-600">Please provide your basic information to help us contextualize your responses.</p>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="question-label block mb-2">1. Full Name <span class="required-star">*</span></label>
+                            <input type="text" name="q1_name" class="form-input w-full px-4 py-3 rounded-lg" placeholder="Enter your full name" required>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-2">2. Job Title <span class="required-star">*</span></label>
+                            <input type="text" name="q2_job_title" class="form-input w-full px-4 py-3 rounded-lg" placeholder="e.g. Supply Chain Analyst" required>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-2">3. Department <span class="required-star">*</span></label>
+                            <input type="text" name="q3_department" class="form-input w-full px-4 py-3 rounded-lg" placeholder="e.g. Logistics, Procurement, Operations" required>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-2">4. Country <span class="required-star">*</span></label>
+                            <input type="text" name="q4_country" class="form-input w-full px-4 py-3 rounded-lg" placeholder="Enter your country" required>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-2">5. Tenure at MRH</label>
+                            <select name="q5_tenure" class="form-select w-full px-4 py-3 rounded-lg">
+                                <option value="">Select tenure</option>
+                                <option value="Less than 1 year">Less than 1 year</option>
+                                <option value="1-3 years">1-3 years</option>
+                                <option value="3-5 years">3-5 years</option>
+                                <option value="5-10 years">5-10 years</option>
+                                <option value="More than 10 years">More than 10 years</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-10 flex justify-between">
+                        <button type="button" onclick="prevSection()" class="px-6 py-3 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition">Previous</button>
+                        <button type="button" onclick="nextSection()" class="btn-primary px-8 py-3 rounded-lg">Next Section</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Role & Process Clarity -->
+            <section id="section-2" class="section">
+                <div class="card p-6 sm:p-10">
+                    <div class="mb-8">
+                        <div class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3" style="background: rgba(10, 35, 66, 0.1); color: var(--navy);">
+                            Section 2 of 8
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2" style="color: var(--navy);">Role & Process Clarity</h2>
+                        <p class="text-gray-600">Help us understand how clear your role and processes are.</p>
+                    </div>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <label class="question-label block mb-3">6. How clear are you on your core responsibilities?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q6_clarity" value="Very clear" class="form-radio mr-3">
+                                    <span>Very clear</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q6_clarity" value="Somewhat clear" class="form-radio mr-3">
+                                    <span>Somewhat clear</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q6_clarity" value="Unclear" class="form-radio mr-3">
+                                    <span>Unclear</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">7. Do you have documented standard operating procedures (SOPs) for your key tasks?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q7_sops" value="Yes, all tasks" class="form-radio mr-3">
+                                    <span>Yes, all tasks</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q7_sops" value="Yes, some tasks" class="form-radio mr-3">
+                                    <span>Yes, some tasks</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q7_sops" value="No" class="form-radio mr-3">
+                                    <span>No</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q7_sops" value="Unsure" class="form-radio mr-3">
+                                    <span>Unsure</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">8. How often do you encounter situations where process steps are unclear or undefined?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q8_unclear_frequency" value="Daily" class="form-radio mr-3">
+                                    <span>Daily</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q8_unclear_frequency" value="Weekly" class="form-radio mr-3">
+                                    <span>Weekly</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q8_unclear_frequency" value="Monthly" class="form-radio mr-3">
+                                    <span>Monthly</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q8_unclear_frequency" value="Rarely" class="form-radio mr-3">
+                                    <span>Rarely</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">9. Describe one process in your role that needs the most improvement and why.</label>
+                            <textarea name="q9_improvement" rows="4" class="form-textarea w-full px-4 py-3 rounded-lg" placeholder="Please describe in detail..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-10 flex justify-between">
+                        <button type="button" onclick="prevSection()" class="px-6 py-3 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition">Previous</button>
+                        <button type="button" onclick="nextSection()" class="btn-primary px-8 py-3 rounded-lg">Next Section</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Cross-Functional Collaboration -->
+            <section id="section-3" class="section">
+                <div class="card p-6 sm:p-10">
+                    <div class="mb-8">
+                        <div class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3" style="background: rgba(10, 35, 66, 0.1); color: var(--navy);">
+                            Section 3 of 8
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2" style="color: var(--navy);">Cross-Functional Collaboration</h2>
+                        <p class="text-gray-600">Tell us about how you work with other teams and departments.</p>
+                    </div>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <label class="question-label block mb-3">10. How frequently do you collaborate with other departments?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q10_collab_freq" value="Daily" class="form-radio mr-3">
+                                    <span>Daily</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q10_collab_freq" value="Weekly" class="form-radio mr-3">
+                                    <span>Weekly</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q10_collab_freq" value="Monthly" class="form-radio mr-3">
+                                    <span>Monthly</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q10_collab_freq" value="Rarely" class="form-radio mr-3">
+                                    <span>Rarely</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">11. How would you rate the effectiveness of cross-functional communication?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q11_comm_effectiveness" value="Excellent" class="form-radio mr-3">
+                                    <span>Excellent</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q11_comm_effectiveness" value="Good" class="form-radio mr-3">
+                                    <span>Good</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q11_comm_effectiveness" value="Fair" class="form-radio mr-3">
+                                    <span>Fair</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q11_comm_effectiveness" value="Poor" class="form-radio mr-3">
+                                    <span>Poor</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">12. Which departments do you interact with most? <span class="text-sm font-normal text-gray-500">(Select all that apply)</span></label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q12_departments" value="Procurement" class="form-checkbox mr-3">
+                                    <span>Procurement</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q12_departments" value="Logistics" class="form-checkbox mr-3">
+                                    <span>Logistics</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q12_departments" value="Warehousing" class="form-checkbox mr-3">
+                                    <span>Warehousing</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q12_departments" value="Sales" class="form-checkbox mr-3">
+                                    <span>Sales</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q12_departments" value="Finance" class="form-checkbox mr-3">
+                                    <span>Finance</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q12_departments" value="IT" class="form-checkbox mr-3">
+                                    <span>IT</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q12_departments" value="Customer Service" class="form-checkbox mr-3">
+                                    <span>Customer Service</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q12_departments" value="Other" class="form-checkbox mr-3">
+                                    <span>Other</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">13. What are the biggest barriers to effective cross-functional work?</label>
+                            <textarea name="q13_barriers" rows="4" class="form-textarea w-full px-4 py-3 rounded-lg" placeholder="Please describe..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-10 flex justify-between">
+                        <button type="button" onclick="prevSection()" class="px-6 py-3 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition">Previous</button>
+                        <button type="button" onclick="nextSection()" class="btn-primary px-8 py-3 rounded-lg">Next Section</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Systems & Tools -->
+            <section id="section-4" class="section">
+                <div class="card p-6 sm:p-10">
+                    <div class="mb-8">
+                        <div class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3" style="background: rgba(10, 35, 66, 0.1); color: var(--navy);">
+                            Section 4 of 8
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2" style="color: var(--navy);">Systems & Tools</h2>
+                        <p class="text-gray-600">Evaluate the tools and systems you use daily.</p>
+                    </div>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <label class="question-label block mb-3">14. How would you rate the primary system/tool you use daily?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q14_system_rating" value="Excellent - meets all needs" class="form-radio mr-3">
+                                    <span>Excellent - meets all needs</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q14_system_rating" value="Good - minor gaps" class="form-radio mr-3">
+                                    <span>Good - minor gaps</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q14_system_rating" value="Fair - significant gaps" class="form-radio mr-3">
+                                    <span>Fair - significant gaps</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q14_system_rating" value="Poor - major issues" class="form-radio mr-3">
+                                    <span>Poor - major issues</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">15. How much time do you spend on manual workarounds due to system limitations?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q15_manual_time" value="None" class="form-radio mr-3">
+                                    <span>None</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q15_manual_time" value="1-2 hours per week" class="form-radio mr-3">
+                                    <span>1-2 hours per week</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q15_manual_time" value="3-5 hours per week" class="form-radio mr-3">
+                                    <span>3-5 hours per week</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q15_manual_time" value="More than 5 hours per week" class="form-radio mr-3">
+                                    <span>More than 5 hours per week</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">16. Do you have access to real-time data needed for your decisions?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q16_realtime_data" value="Always" class="form-radio mr-3">
+                                    <span>Always</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q16_realtime_data" value="Mostly" class="form-radio mr-3">
+                                    <span>Mostly</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q16_realtime_data" value="Sometimes" class="form-radio mr-3">
+                                    <span>Sometimes</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q16_realtime_data" value="Rarely" class="form-radio mr-3">
+                                    <span>Rarely</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">17. What is the #1 system or tool improvement that would make your job easier?</label>
+                            <textarea name="q17_improvement" rows="4" class="form-textarea w-full px-4 py-3 rounded-lg" placeholder="Please describe..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-10 flex justify-between">
+                        <button type="button" onclick="prevSection()" class="px-6 py-3 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition">Previous</button>
+                        <button type="button" onclick="nextSection()" class="btn-primary px-8 py-3 rounded-lg">Next Section</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Customer Experience -->
+            <section id="section-5" class="section">
+                <div class="card p-6 sm:p-10">
+                    <div class="mb-8">
+                        <div class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3" style="background: rgba(10, 35, 66, 0.1); color: var(--navy);">
+                            Section 5 of 8
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2" style="color: var(--navy);">Customer Experience</h2>
+                        <p class="text-gray-600">Share insights about customer interactions and service quality.</p>
+                    </div>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <label class="question-label block mb-3">18. What type of customer interactions do you handle? <span class="text-sm font-normal text-gray-500">(Select all that apply)</span></label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q18_interactions" value="Direct customer contact" class="form-checkbox mr-3">
+                                    <span>Direct customer contact</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q18_interactions" value="Order processing" class="form-checkbox mr-3">
+                                    <span>Order processing</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q18_interactions" value="Issue resolution" class="form-checkbox mr-3">
+                                    <span>Issue resolution</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q18_interactions" value="Delivery coordination" class="form-checkbox mr-3">
+                                    <span>Delivery coordination</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q18_interactions" value="No direct customer interaction" class="form-checkbox mr-3">
+                                    <span>No direct customer interaction</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">19. How would you rate MRH's overall customer service performance?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q19_service_rating" value="Excellent" class="form-radio mr-3">
+                                    <span>Excellent</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q19_service_rating" value="Good" class="form-radio mr-3">
+                                    <span>Good</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q19_service_rating" value="Fair" class="form-radio mr-3">
+                                    <span>Fair</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q19_service_rating" value="Poor" class="form-radio mr-3">
+                                    <span>Poor</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">20. How often do customer issues stem from internal process failures?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q20_issue_frequency" value="Frequently" class="form-radio mr-3">
+                                    <span>Frequently</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q20_issue_frequency" value="Sometimes" class="form-radio mr-3">
+                                    <span>Sometimes</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q20_issue_frequency" value="Rarely" class="form-radio mr-3">
+                                    <span>Rarely</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q20_issue_frequency" value="Never" class="form-radio mr-3">
+                                    <span>Never</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">21. What is one change that would most improve customer experience?</label>
+                            <textarea name="q21_cx_change" rows="4" class="form-textarea w-full px-4 py-3 rounded-lg" placeholder="Please describe..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-10 flex justify-between">
+                        <button type="button" onclick="prevSection()" class="px-6 py-3 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition">Previous</button>
+                        <button type="button" onclick="nextSection()" class="btn-primary px-8 py-3 rounded-lg">Next Section</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Performance & Metrics -->
+            <section id="section-6" class="section">
+                <div class="card p-6 sm:p-10">
+                    <div class="mb-8">
+                        <div class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3" style="background: rgba(10, 35, 66, 0.1); color: var(--navy);">
+                            Section 6 of 8
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2" style="color: var(--navy);">Performance & Metrics</h2>
+                        <p class="text-gray-600">Help us understand how performance is measured in your role.</p>
+                    </div>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <label class="question-label block mb-3">22. Are your performance metrics clearly defined?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q22_metrics_defined" value="Yes, very clear" class="form-radio mr-3">
+                                    <span>Yes, very clear</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q22_metrics_defined" value="Somewhat clear" class="form-radio mr-3">
+                                    <span>Somewhat clear</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q22_metrics_defined" value="Not clear" class="form-radio mr-3">
+                                    <span>Not clear</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">23. How often do you review performance data?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q23_review_freq" value="Daily" class="form-radio mr-3">
+                                    <span>Daily</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q23_review_freq" value="Weekly" class="form-radio mr-3">
+                                    <span>Weekly</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q23_review_freq" value="Monthly" class="form-radio mr-3">
+                                    <span>Monthly</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q23_review_freq" value="Rarely" class="form-radio mr-3">
+                                    <span>Rarely</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">24. Do you feel metrics align with actual business priorities?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q24_metrics_align" value="Strongly agree" class="form-radio mr-3">
+                                    <span>Strongly agree</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q24_metrics_align" value="Agree" class="form-radio mr-3">
+                                    <span>Agree</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q24_metrics_align" value="Disagree" class="form-radio mr-3">
+                                    <span>Disagree</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q24_metrics_align" value="Strongly disagree" class="form-radio mr-3">
+                                    <span>Strongly disagree</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">25. What metric would best indicate success in your role?</label>
+                            <textarea name="q25_best_metric" rows="4" class="form-textarea w-full px-4 py-3 rounded-lg" placeholder="Please describe..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-10 flex justify-between">
+                        <button type="button" onclick="prevSection()" class="px-6 py-3 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition">Previous</button>
+                        <button type="button" onclick="nextSection()" class="btn-primary px-8 py-3 rounded-lg">Next Section</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Operational Challenges -->
+            <section id="section-7" class="section">
+                <div class="card p-6 sm:p-10">
+                    <div class="mb-8">
+                        <div class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3" style="background: rgba(10, 35, 66, 0.1); color: var(--navy);">
+                            Section 7 of 8
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2" style="color: var(--navy);">Operational Challenges</h2>
+                        <p class="text-gray-600">Identify the main obstacles affecting your daily operations.</p>
+                    </div>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <label class="question-label block mb-3">26. How often do you face unexpected operational disruptions?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q26_disruptions" value="Daily" class="form-radio mr-3">
+                                    <span>Daily</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q26_disruptions" value="Weekly" class="form-radio mr-3">
+                                    <span>Weekly</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q26_disruptions" value="Monthly" class="form-radio mr-3">
+                                    <span>Monthly</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q26_disruptions" value="Rarely" class="form-radio mr-3">
+                                    <span>Rarely</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">27. How long does it typically take to resolve operational issues?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q27_resolution_time" value="Under 1 hour" class="form-radio mr-3">
+                                    <span>Under 1 hour</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q27_resolution_time" value="1-4 hours" class="form-radio mr-3">
+                                    <span>1-4 hours</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q27_resolution_time" value="1 day" class="form-radio mr-3">
+                                    <span>1 day</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q27_resolution_time" value="Multiple days" class="form-radio mr-3">
+                                    <span>Multiple days</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">28. Do you feel empowered to make decisions to resolve issues quickly?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q28_empowered" value="Always" class="form-radio mr-3">
+                                    <span>Always</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q28_empowered" value="Mostly" class="form-radio mr-3">
+                                    <span>Mostly</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q28_empowered" value="Sometimes" class="form-radio mr-3">
+                                    <span>Sometimes</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q28_empowered" value="Rarely" class="form-radio mr-3">
+                                    <span>Rarely</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">29. What are the top 3 operational challenges you face? <span class="text-sm font-normal text-gray-500">(Select all that apply)</span></label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q29_challenges" value="System downtime" class="form-checkbox mr-3">
+                                    <span>System downtime</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q29_challenges" value="Lack of information" class="form-checkbox mr-3">
+                                    <span>Lack of information</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q29_challenges" value="Supplier delays" class="form-checkbox mr-3">
+                                    <span>Supplier delays</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q29_challenges" value="Internal approvals" class="form-checkbox mr-3">
+                                    <span>Internal approvals</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q29_challenges" value="Resource constraints" class="form-checkbox mr-3">
+                                    <span>Resource constraints</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q29_challenges" value="Unclear processes" class="form-checkbox mr-3">
+                                    <span>Unclear processes</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="checkbox" name="q29_challenges" value="Communication gaps" class="form-checkbox mr-3">
+                                    <span>Communication gaps</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">30. Describe your biggest recurring operational problem.</label>
+                            <textarea name="q30_recurring_problem" rows="4" class="form-textarea w-full px-4 py-3 rounded-lg" placeholder="Please describe..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-10 flex justify-between">
+                        <button type="button" onclick="prevSection()" class="px-6 py-3 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition">Previous</button>
+                        <button type="button" onclick="nextSection()" class="btn-primary px-8 py-3 rounded-lg">Next Section</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 8: Improvement Opportunities -->
+            <section id="section-8" class="section">
+                <div class="card p-6 sm:p-10">
+                    <div class="mb-8">
+                        <div class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3" style="background: rgba(10, 35, 66, 0.1); color: var(--navy);">
+                            Section 8 of 8
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2" style="color: var(--navy);">Improvement Opportunities</h2>
+                        <p class="text-gray-600">Your final thoughts on making operations better.</p>
+                    </div>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <label class="question-label block mb-3">31. How open is leadership to process improvement suggestions?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q31_leadership_open" value="Very open" class="form-radio mr-3">
+                                    <span>Very open</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q31_leadership_open" value="Somewhat open" class="form-radio mr-3">
+                                    <span>Somewhat open</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q31_leadership_open" value="Not very open" class="form-radio mr-3">
+                                    <span>Not very open</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q31_leadership_open" value="Closed" class="form-radio mr-3">
+                                    <span>Closed</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">32. Have you submitted improvement ideas in the past year?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q32_submitted_ideas" value="Yes, multiple" class="form-radio mr-3">
+                                    <span>Yes, multiple</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q32_submitted_ideas" value="Yes, one or two" class="form-radio mr-3">
+                                    <span>Yes, one or two</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q32_submitted_ideas" value="No" class="form-radio mr-3">
+                                    <span>No</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">33. Were your ideas implemented?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q33_ideas_implemented" value="Yes, all" class="form-radio mr-3">
+                                    <span>Yes, all</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q33_ideas_implemented" value="Yes, some" class="form-radio mr-3">
+                                    <span>Yes, some</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q33_ideas_implemented" value="No" class="form-radio mr-3">
+                                    <span>No</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q33_ideas_implemented" value="N/A" class="form-radio mr-3">
+                                    <span>N/A</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">34. What training would help you perform better?</label>
+                            <textarea name="q34_training" rows="3" class="form-textarea w-full px-4 py-3 rounded-lg" placeholder="Please describe..."></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">35. If you could change one thing about MRH operations, what would it be?</label>
+                            <textarea name="q35_one_change" rows="4" class="form-textarea w-full px-4 py-3 rounded-lg" placeholder="Please describe..."></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">36. What is working well that we should preserve?</label>
+                            <textarea name="q36_working_well" rows="4" class="form-textarea w-full px-4 py-3 rounded-lg" placeholder="Please describe..."></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">37. Rate your overall job satisfaction</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q37_satisfaction" value="Very satisfied" class="form-radio mr-3">
+                                    <span>Very satisfied</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q37_satisfaction" value="Satisfied" class="form-radio mr-3">
+                                    <span>Satisfied</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q37_satisfaction" value="Neutral" class="form-radio mr-3">
+                                    <span>Neutral</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q37_satisfaction" value="Dissatisfied" class="form-radio mr-3">
+                                    <span>Dissatisfied</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">38. How likely are you to recommend MRH as a place to work?</label>
+                            <select name="q38_recommend" class="form-select w-full px-4 py-3 rounded-lg">
+                                <option value="">Select rating</option>
+                                <option value="10 - Extremely likely">10 - Extremely likely</option>
+                                <option value="9">9</option>
+                                <option value="8">8</option>
+                                <option value="7">7</option>
+                                <option value="6">6</option>
+                                <option value="5">5</option>
+                                <option value="4">4</option>
+                                <option value="3">3</option>
+                                <option value="2">2</option>
+                                <option value="1">1</option>
+                                <option value="0 - Not at all likely">0 - Not at all likely</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">39. Do you have the resources needed to succeed in your role?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q39_resources" value="Yes, fully" class="form-radio mr-3">
+                                    <span>Yes, fully</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q39_resources" value="Mostly" class="form-radio mr-3">
+                                    <span>Mostly</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q39_resources" value="Partially" class="form-radio mr-3">
+                                    <span>Partially</span>
+                                </label>
+                                <label class="flex items-center p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition">
+                                    <input type="radio" name="q39_resources" value="No" class="form-radio mr-3">
+                                    <span>No</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">40. What additional resources would you need?</label>
+                            <textarea name="q40_additional_resources" rows="3" class="form-textarea w-full px-4 py-3 rounded-lg" placeholder="Please describe..."></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="question-label block mb-3">41. Any other comments or suggestions?</label>
+                            <textarea name="q41_comments" rows="5" class="form-textarea w-full px-4 py-3 rounded-lg" placeholder="Optional: Share any additional thoughts..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-10 flex justify-between">
+                        <button type="button" onclick="prevSection()" class="px-6 py-3 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition">Previous</button>
+                        <button type="button" onclick="submitForm()" class="btn-secondary px-8 py-3 rounded-lg flex items-center gap-2">
+                            Submit Assessment
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </form>
+
+        <!-- Thank You Section -->
+        <section id="section-thanks" class="section">
+            <div class="card p-6 sm:p-12 text-center">
+                <div class="mb-6">
+                    <div class="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-6" style="background: rgba(227, 181, 5, 0.15);">
+                        <svg class="w-10 h-10" style="color: var(--mustard);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-bold mb-4" style="color: var(--navy);">Thank You!</h2>
+                    <p class="text-lg text-gray-600 mb-2">Your responses have been recorded successfully.</p>
+                    <p class="text-gray-500">We appreciate your time and valuable insights to improve MRH operations.</p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                    <button onclick="downloadCSV()" class="btn-primary px-8 py-3 rounded-lg flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Download CSV Report
+                    </button>
+                    <button onclick="resetForm()" class="px-8 py-3 rounded-lg border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition">
+                        Submit Another Response
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: var(--navy);" class="text-white mt-auto">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="text-center text-sm text-gray-300">
+                <p class="mb-2">© 2024 MRH. All rights reserved.</p>
+                <p class="text-xs text-gray-400">
+                    <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                    Confidentiality Notice: All responses are confidential and will only be used for operational improvement purposes. Individual responses will not be shared without explicit consent.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentSection = 0;
+        const totalSections = 8;
+        let formData = {};
+        
+        const questionLabels = {
+            q1_name: "1. Full Name",
+            q2_job_title: "2. Job Title",
+            q3_department: "3. Department",
+            q4_country: "4. Country",
+            q5_tenure: "5. Tenure at MRH",
+            q6_clarity: "6. How clear are you on your core responsibilities?",
+            q7_sops: "7. Do you have documented SOPs for your key tasks?",
+            q8_unclear_frequency: "8. How often do you encounter unclear process steps?",
+            q9_improvement: "9. Process needing most improvement",
+            q10_collab_freq: "10. Frequency of collaboration with other departments",
+            q11_comm_effectiveness: "11. Effectiveness of cross-functional communication",
+            q12_departments: "12. Departments you interact with most",
+            q13_barriers: "13. Biggest barriers to effective cross-functional work",
+            q14_system_rating: "14. Rating of primary system/tool",
+            q15_manual_time: "15. Time spent on manual workarounds",
+            q16_realtime_data: "16. Access to real-time data",
+            q17_improvement: "17. #1 system/tool improvement",
+            q18_interactions: "18. Type of customer interactions handled",
+            q19_service_rating: "19. MRH's overall customer service performance",
+            q20_issue_frequency: "20. How often customer issues stem from process failures",
+            q21_cx_change: "21. One change to improve customer experience",
+            q22_metrics_defined: "22. Are performance metrics clearly defined?",
+            q23_review_freq: "23. How often do you review performance data?",
+            q24_metrics_align: "24. Do metrics align with business priorities?",
+            q25_best_metric: "25. Metric that would best indicate success",
+            q26_disruptions: "26. Frequency of unexpected operational disruptions",
+            q27_resolution_time: "27. Typical time to resolve operational issues",
+            q28_empowered: "28. Empowered to make decisions quickly",
+            q29_challenges: "29. Top operational challenges",
+            q30_recurring_problem: "30. Biggest recurring operational problem",
+            q31_leadership_open: "31. Leadership openness to improvement suggestions",
+            q32_submitted_ideas: "32. Submitted improvement ideas in past year",
+            q33_ideas_implemented: "33. Were your ideas implemented?",
+            q34_training: "34. Training that would help perform better",
+            q35_one_change: "35. One thing to change about MRH operations",
+            q36_working_well: "36. What is working well to preserve",
+            q37_satisfaction: "37. Overall job satisfaction",
+            q38_recommend: "38. Likelihood to recommend MRH as place to work",
+            q39_resources: "39. Have resources needed to succeed",
+            q40_additional_resources: "40. Additional resources needed",
+            q41_comments: "41. Other comments or suggestions"
+        };
+
+        function updateProgress() {
+            const progress = (currentSection / totalSections) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            if (currentSection > 0 && currentSection <= totalSections) {
+                document.getElementById('sectionCounter').classList.remove('hidden');
+                document.getElementById('currentSectionNum').textContent = currentSection;
+            } else {
+                document.getElementById('sectionCounter').classList.add('hidden');
+            }
+        }
+
+        function showSection(index) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + index).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            updateProgress();
+        }
+
+        function nextSection() {
+            if (currentSection === 1) {
+                if (!validateSection1()) {
+                    return;
+                }
+            }
+            
+            if (currentSection < totalSections) {
+                currentSection++;
+                showSection(currentSection);
+            }
+        }
+
+        function prevSection() {
+            if (currentSection > 0) {
+                currentSection--;
+                showSection(currentSection);
+            }
+        }
+
+        function validateSection1() {
+            const name = document.querySelector('[name="q1_name"]').value.trim();
+            const jobTitle = document.querySelector('[name="q2_job_title"]').value.trim();
+            const department = document.querySelector('[name="q3_department"]').value.trim();
+            const country = document.querySelector('[name="q4_country"]').value.trim();
+            
+            if (!name || !jobTitle || !department || !country) {
+                alert('Please fill in all required fields: Name, Job Title, Department, and Country.');
+                return false;
+            }
+            return true;
+        }
+
+        function collectFormData() {
+            const form = document.getElementById('diagnosticForm');
+            const data = {};
+            
+            // Collect all inputs
+            const inputs = form.querySelectorAll('input[type="text"], input[type="radio"]:checked, textarea, select');
+            inputs.forEach(input => {
+                if (input.type === 'radio') {
+                    data[input.name] = input.value;
+                } else if (input.type !== 'checkbox') {
+                    data[input.name] = input.value;
+                }
+            });
+            
+            // Collect checkboxes
+            const checkboxGroups = ['q12_departments', 'q18_interactions', 'q29_challenges'];
+            checkboxGroups.forEach(name => {
+                const checked = Array.from(form.querySelectorAll(`input[name="${name}"]:checked`))
+                    .map(cb => cb.value);
+                data[name] = checked.join('; ');
+            });
+            
+            data.timestamp = new Date().toISOString();
+            return data;
+        }
+
+        function submitForm() {
+            if (!validateSection1()) {
+                currentSection = 1;
+                showSection(1);
+                return;
+            }
+            
+            formData = collectFormData();
+            
+            // Store in localStorage
+            localStorage.setItem('mrh_diagnostic_' + Date.now(), JSON.stringify(formData));
+            
+            // Show thank you page
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-thanks').classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('progressBar').style.width = '100%';
+        }
+
+        function downloadCSV() {
+            const data = formData;
+            let csv = 'Question,Response\n';
+            
+            // Timestamp first
+            csv += `"Submission Timestamp","${data.timestamp || ''}"\n`;
+            
+            // All questions
+            Object.keys(questionLabels).forEach(key => {
+                const label = questionLabels[key];
+                const value = data[key] || '';
+                const escapedValue = String(value).replace(/"/g, '""');
+                csv += `"${label}","${escapedValue}"\n`;
+            });
+            
+            // Create download
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            const timestamp = new Date().toISOString().split('T')[0];
+            const name = data.q1_name || 'anonymous';
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `MRH_Diagnostic_${name.replace(/[^a-z0-9]/gi, '_')}_${timestamp}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function resetForm() {
+            document.getElementById('diagnosticForm').reset();
+            currentSection = 0;
+            formData = {};
+            showSection(0);
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>
